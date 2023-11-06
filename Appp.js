@@ -25,7 +25,9 @@ const LoginScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [checked, setChecked] = React.useState('first');
+  // const [checked, setChecked] = React.useState('first');
+  const [city, setCity] = React.useState('');
+  const [gender, setGender] = React.useState('');
 
   const handleLogin = () => {
     if (username === 'HIMANSHU' && password === '123') {
@@ -33,41 +35,34 @@ const LoginScreen = ({navigation}) => {
     } else {
       setErrorMessage('Invalid credentials. Please try again.');
     }
+    navigation.navigate('NextPage', {
+      city,
+      gender,
+    });
   };
   const data = [
-    {label: 'Nainital', value: 1},
-    {label: 'Ramnagar', value: 2},
-    {label: 'Haldwani', value: 3},
+    {label: 'Nainital', value: 'Nainital'},
+    {label: 'Ramnagar', value: 'Ramnagar'},
+    {label: 'Haldwani', value: 'Haldwani'},
   ];
+  const genders = ['Male', 'Female'];
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login Page</Text>
       {errorMessage !== '' && (
         <Text style={styles.errorMessage}>{errorMessage}</Text>
       )}
-      <View Style={styles.btn}>
-        <Text>MALE</Text>
-        <RadioButton
-          value="first"
-          status={checked === 'first' ? 'checked' : 'unchecked'}
-          onPress={() => setChecked('first')}
-        />
-
-        <Text>FEMALE</Text>
-        <RadioButton
-          value="second"
-          status={checked === 'second' ? 'checked' : 'unchecked'}
-          onPress={() => setChecked('second')}
-        />
-      </View>
       <View style={styles.dropdown}>
         <Dropdown
-          selectedTextStyle={{color: 'black'}}
-          inputSearchStyle={{color: 'red'}}
-          placeholder="CITY"
+          style={styles.dropdown}
+          placeholder="Select City"
+          selectedTextStyle={{color: '#000'}}
           data={data}
-          labelField="label1"
+          labelField="label"
           valueField="value"
+          onChange={item => {
+            setCity(item.value);
+          }}
         />
       </View>
       <TextInput
@@ -83,13 +78,26 @@ const LoginScreen = ({navigation}) => {
         onChangeText={text => setPassword(text)}
         secureTextEntry
       />
+      <View style={styles.radio_container}>
+        <Text style={styles.gender}>Gender:</Text>
+        {genders.map((gen, index) => (
+          <View key={index} style={styles.radioButton}>
+            <RadioButton
+              value={gen}
+              status={gen === gender ? 'checked' : 'unchecked'}
+              onPress={() => setGender(gen)}
+            />
+            <Text>{gen}</Text>
+          </View>
+        ))}
+      </View>
       <Button title="Login" onPress={handleLogin} />
     </View>
   );
 };
 
 const NextPage = ({route}) => {
-  const {username, password} = route.params;
+  const {username, password, city, gender} = route.params;
 
   return (
     <View style={styles.container}>
@@ -98,6 +106,8 @@ const NextPage = ({route}) => {
         to the Next Page!
       </Text>
       <Text style={styles.title}>YOUR PASSWORD IS : {password}</Text>
+      <Text style={styles.title}>Your city is: {city}</Text>
+      <Text style={styles.title}>Gender is: {gender}</Text>
     </View>
   );
 };
@@ -105,13 +115,12 @@ const NextPage = ({route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#e6e6fa',
+    backgroundColor: '#fff',
+    padding: '10%',
   },
   title: {
     fontSize: 34,
-    marginBottom: 20,
+    textAlign: 'center',
     fontWeight: 'bold',
     color: 'black',
     marginBottom: 50,
@@ -134,11 +143,25 @@ const styles = StyleSheet.create({
   },
   btn: {
     flexDirection: 'row',
-    flex: 1,
-    color: 'red',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    marginBottom: 10,
   },
   dropdown: {
-    color: 'red',
+    marginBottom: 10,
+  },
+  radio_container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  gender: {
+    fontSize: 18,
+  },
+  radioButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
